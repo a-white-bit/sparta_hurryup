@@ -146,40 +146,36 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        //일반
-        let username = '테스트이름';
+        // 일반
+        let username = '양소영';
         let docs = await getDocs(collection(db, username));
 
-        //총 사용금액
+        // 총 사용금액
         let total_used = 0;
 
         docs.forEach((doc) => {
+            if (doc.id == 'password') return;
             let row = doc.data();
             let date = row['date'];
             let name = row['name'];
             let price = row['price'];
+            let price_str = price.toLocaleString('ko-KR');
             let comment = row['comment'];
 
             // 총 사용금액 계산
-            if (date !== undefined) {
-                let temp_html = `<tr class="align-middle">
+            let temp_html = `<tr class="align-middle">
                         <td>${date}</td>
-                        <td>${price}원</td>
+                        <td>${price_str}원</td>
                         <td>${name}</td>
                         <td>${comment}</td>
                         </tr>`
-                $('#card').append(temp_html);
+            $('#card').append(temp_html);
 
-                // 임시
-                // DB 정리 후 삭제
-                // DB 내부에 있는 (,) 제거
-                price = String(price).replace(/,/g, '');
-                total_used += Number(price);
-            }
+            total_used += Number(price);
         });
 
+        // 총 사용금액 알림 박스
         let format_total_used = total_used.toLocaleString('ko-KR');
-        //총 사용금액 나오는 상자(알림창)
         let temp2_html = `
             <div class="alert alert-primary" role="alert">
             이번 달은 ${format_total_used}원이나 지출했어요!!
@@ -191,10 +187,10 @@
         const offset = new Date().getTimezoneOffset() * 60000;
         const today = new Date(Date.now() - offset).toISOString();
         document.getElementById('date').value = today.substring(0, 10);
-        // toISOString() --> 2024-04-11T16:11:35.641Z
 
 
         // 지출 금액 기입을  금액 단위(,)로 표시
+        // 숫자 외 입력 불가
         const input = document.querySelector('#price');
         input.addEventListener('keyup', function (e) {
             let value = e.target.value;
@@ -207,27 +203,25 @@
             }
         })
 
-
-
-        //지출내역입력 저장하면 파이어스토어에 저장. 수입은 해당안됨
+        // 지출 내역 입력 firebase로 저장
         $('#expensave').click(async function () {
             let date = $('#date').val();
             let name = $('#name').val();
             let price_str = $('#price').val();
-            let price = price_str.replace(/,/g, ''); // (,) 제거
+            price_str = price_str.replace(/,/g, '');
+            let price = Number(price_str);
             let comment = $('#comment').val();
             let time = today;
             let expense = { 'date': date, 'name': name, 'price': price, 'comment': comment, 'time': time };
 
-            let iter = 0;
+            let docindex = 0;
             const q = query(collection(db, username), where("date", "==", date));
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
-                iter++;
+                docindex++;
             });
 
-            let docname = date + '_' + iter;
-
+            let docname = date + '_' + docindex;
             await setDoc(doc(collection(db, username), docname), expense);
             alert('저장되었습니다.');
             window.location.reload();
