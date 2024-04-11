@@ -146,8 +146,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+
         // 일반
-        let username = '양소영';
+        const username = window.localStorage.getItem('name');
+        window.localStorage.clear();
         let docs = await getDocs(collection(db, username));
 
         // 총 사용금액
