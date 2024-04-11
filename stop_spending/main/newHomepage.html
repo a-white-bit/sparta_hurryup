@@ -233,7 +233,7 @@
             } else {
             let doc = { 'date': date, 'name': name, 'price': price, 'comment': comment };
             console.log(date, name, price, comment);
-            await addDoc(collection(db, "gagebu"), doc);
+            await addDoc(collection(db, username), doc);
             alert('저장되었습니다.');
             window.location.reload();
             } 
