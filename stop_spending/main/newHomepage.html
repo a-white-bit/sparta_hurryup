@@ -153,13 +153,11 @@
         let docs = await getDocs(collection(db, "gagebu"));
         docs.forEach((doc) => {
             let row = doc.data();
-            console.log(row);
-
             let date = row['date'];
             let name = row['name'];
             let price = row['price'];
             let comment = row['comment'];
-            console.log(name);
+
             // 총 사용금액 계산
             let temp_html = `<tr class="align-middle">
                         <td>${date}</td>
@@ -175,17 +173,17 @@
             // DB 정리 후 삭제
             // DB 내부에 있는 (,) 제거
             price = String(price).replace(/,/g, '');
-            console.log(price);
             total_used += Number(price);
         });
 
+        let format_total_used = total_used.toLocaleString('ko-KR');
         //총 사용금액 나오는 상자(알림창)
         let temp2_html = `
             <div class="alert alert-primary" role="alert">
-            이번 달은 ${total_used}원이나 지출했어요!!
+            이번 달은 ${format_total_used}원이나 지출했어요!!
             </div>`
         $('#total_usage_box').append(temp2_html);
-
+        
 
         // 지출 날짜를 오늘 날짜 기본값 추출
         const offset = new Date().getTimezoneOffset() * 60000;
