@@ -129,6 +129,7 @@
         import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { query, orderBy,where, limit } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
 
         // Firebase 구성 정보 설정
@@ -144,13 +145,21 @@
         // Firebase 인스턴스 초기화
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        
+        //조건절? 
+        let docs = await getDocs(query(collection(db, "gagebu"),where("price",">=",10000) ,orderBy("price")));
+
+        //OrderBy로 date순으로 정렬
+        //let docs = await getDocs(query(collection(db, "gagebu"),orderBy("date","asc")));
+
+        //일반
+        //let docs = await getDocs(collection(db, "gagebu"));
 
 
 
         //총 사용금액
         let total_used = 0;
 
-        let docs = await getDocs(collection(db, "gagebu"));
         docs.forEach((doc) => {
             let row = doc.data();
             let date = row['date'];
