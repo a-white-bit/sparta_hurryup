@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지출을 막아줘</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="icon" href="../favicon/money.ico" type="image/x-icon" sizes="16x16">
+
+    <style>
+        .loginBackground {
+            padding-top: 400px;
+
+            color: white;
+            text-align: center;
+            margin: 0 auto;
+
+            background-image: url('https://cdn.pixabay.com/photo/2019/11/27/00/55/money-4655836_1280.jpg');
+            background-size: cover;
+        }
+    </style>
+
+    <script type="module">
+
+        // Firebase SDK 라이브러리 가져오기
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { doc, collection, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+        // Firebase 구성 정보 설정
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsb9smlR201DL-vtzFHwmPimt3JqROrDI",
+            authDomain: "stop-splurging.firebaseapp.com",
+            projectId: "stop-splurging",
+            storageBucket: "stop-splurging.appspot.com",
+            messagingSenderId: "398059301266",
+            appId: "1:398059301266:web:cf439919b22a2fb26c394b",
+            measurementId: "G-BCWCBW84MD"
+        };
+
+        // Firebase 인스턴스 초기화
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+
+        $("#loginBtn").click(async function () {
+            if (document.getElementById("loginInput").style.display == "none") {
+                document.getElementById("loginInput").style.display = "";
+                document.getElementById("loginError").style.display = "none";
+                document.getElementById("enrollInput").style.display = "none";
+                $('#enrollmentBtn').text('사용자 등록하기');
+                $('#loginBtn').text('로그인');
+            }
+            else {
+                let name = $('#loginName').val();
+                let pw = $('#loginPassword').val();
+
+                if (name != '' && pw != '') {
+                    const snap = await getDoc(doc(db, name, 'password'));
+                    if (snap.exists()) {
+                        let snapData = snap.data();
+                        if (snapData['password'] == pw) {
+                            alert('로그인되었습니다.');
+                            window.location = "../main/newHomepage.html"//"https://www.google.com";      //여기에 메인화면 주소 수정해주시면 됩니다.
+                        }
+                        else {
+                            alert('비밀번호가 틀렸습니다.');
+                            document.getElementById("loginPassword").value = '';
+                        }
+                    }
+                    else {
+                        alert('로그인에 실패하였습니다.');
+                        document.getElementById("loginError").style.display = 'none';
+                        document.getElementById("loginName").value = '';
+                        document.getElementById("loginPassword").value = '';
+                    }
+                }
+                else if (name == '' && pw != '') {
+                    alert('이름을 입력하세요');
+                }
+                else if (name != '' && pw == '') {
+                    alert('비밀번호를 입력하세요');
+                }
+            }
+        })
+
+        $("#enrollmentBtn").click(async function () {
+            if (document.getElementById("enrollInput").style.display == "none") {
+                document.getElementById("enrollInput").style.display = "";
+                document.getElementById("enrollError").style.display = "none";
+                document.getElementById("loginInput").style.display = "none";
+                $('#loginBtn').text('로그인하기');
+                $('#enrollmentBtn').text('사용자 등록');
+            }
+            else {
+                let name = $('#enrollName').val();
+                let pw = $('#enrollPassword').val();
+
+                if (name != '' && pw != '') {
+                    const snap = await getDoc(doc(db, name, 'password'));
+                    if (snap.exists()) {
+                        alert('이미 존재하는 이름입니다.');
+                        document.getElementById("enrollError").style.display = '';
+                        document.getElementById("enrollName").value = '';
+                        document.getElementById("enrollPassword").value = '';
+                        return;
+                    }
+                    await setDoc(doc(collection(db, name), 'password'), { 'password': pw });
+                    alert('DB 저장 완료');
+                    window.location.reload();
+                }
+                else {
+                    alert('잘못된 입력입니다.');
+                    document.getElementById("enrollError").style.display = '';
+                    document.getElementById("enrollName").value = '';
+                    document.getElementById("enrollPassword").value = '';
+                }
+            }
+        })
+
+
+
+
+    </script>
+</head>
+
+<body class="loginBackground">
+    <div>
+        <h1>지출을 막아줘</h1>
+        <h5>과소비 막기 프로젝트</h5>
+    </div>
+
+
+
+
+
+    <div>
+        <div id="loginInput" style="display:none;">
+            <div id="loginError" style="display:none; color: red;">잘못된 입력입니다.</div>
+            이름 <input id="loginName" value="" /><br>
+            암호 <input id="loginPassword" type='password' value="" />
+        </div>
+
+
+        <div id="enrollInput" style="display:none;">
+            <div id="enrollError" style="display:none; color: red;">잘못된 입력입니다.</div>
+            사용자 이름 <input id="enrollName" value="" /><br>
+            암호를 입력하세요 <input id="enrollPassword" type='password' value="" />
+        </div>
+
+        <button id="loginBtn">로그인</button>
+        <button id="enrollmentBtn">사용자 등록</button>
+    </div>
+
+
+</body>
+
+</html>
