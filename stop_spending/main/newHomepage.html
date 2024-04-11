@@ -222,21 +222,20 @@
                 docindex++;
             });
 
-            if(!date || !name || !price ) {
-                if(!name && price) {
-                alert('지출품목이 비어 있습니다, 지출 품목을 확인해주세요.');
+            if (!date || !name || !price) {
+                if (!name && price) {
+                    alert('지출품목이 비어 있습니다. 지출 품목을 확인해주세요.');
                 } else if (name && !price) {
-                alert('금액이 비어 있습니다, 금액을 확인해주세요.');
+                    alert('금액이 비어 있습니다. 금액을 확인해주세요.');
                 } else {
-                alert('비어있는 항목이 있습니다, 확인해주세요.');
+                    alert('비어있는 항목이 있습니다. 확인해주세요.');
                 }
             } else {
-            let doc = { 'date': date, 'name': name, 'price': price, 'comment': comment };
-            console.log(date, name, price, comment);
-            await addDoc(collection(db, username), doc);
-            alert('저장되었습니다.');
-            window.location.reload();
-            } 
+                let docname = date + '_' + docindex;
+                await setDoc(doc(collection(db, username), docname), expense);
+                alert('저장되었습니다.');
+                window.location.reload();
+            }
         })
 
         $("#save_expen_btn").click(function () {
