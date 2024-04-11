@@ -47,7 +47,7 @@
     import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
+    import { query, orderBy,where, limit } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
     // Firebase 구성 정보 설정
     const firebaseConfig = {
@@ -64,10 +64,23 @@
     const db = getFirestore(app);
 
 
-    let docs = await getDocs(collection(db, "gagebu"));
+    let totlaprice = 0
+
+    //조건절? 
+    //let docs = await getDocs(query(collection(db, "gagebu"),where("price",">=",10000) ,orderBy("price"),orderBy("date","asc")));
+
+    //OrderBy로 date순으로 정렬
+    let docs = await getDocs(query(collection(db, "gagebu"),orderBy("date","asc")));
+
+    //일반
+    //let docs = await getDocs(collection(db, "gagebu"));
+
+    //console.log(docs); 
+
+
     docs.forEach((doc) => {
         let row = doc.data();
-        console.log(row);
+        // console.log(row);
 
         let date = row['date'];
         let name = row['name'];
@@ -80,13 +93,17 @@
                           <td class="align-top">${price}</td>
                           <td>${coment}</td>
     </tr>`
+    totlaprice += price;
         $('#card').append(temp_html);
         // var total = 0;
         // var total = total+price;
         // console.log(total);
     });
-    let pricetotal = sum()
 
+    $('#topi').append(totlaprice);
+    
+
+    
 
 </script>
 
@@ -114,7 +131,7 @@
         </div>
 
         <div class="total" role="alert">
-            총 금액 사용은  입니다.
+            총 금액 사용은 <span id = topi></span>입니다.
         </div>
 
 
