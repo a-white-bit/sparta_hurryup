@@ -147,10 +147,10 @@
         const db = getFirestore(app);
         
         //조건절? 
-        let docs = await getDocs(query(collection(db, "gagebu"),where("price",">=",10000) ,orderBy("price")));
+        //let docs = await getDocs(query(collection(db, "gagebu"),where("price",">=",10000) ,orderBy("price")));
 
         //OrderBy로 date순으로 정렬
-        //let docs = await getDocs(query(collection(db, "gagebu"),orderBy("date","asc")));
+        let docs = await getDocs(query(collection(db, "gagebu"),orderBy("date","asc")));
 
         //일반
         //let docs = await getDocs(collection(db, "gagebu"));
