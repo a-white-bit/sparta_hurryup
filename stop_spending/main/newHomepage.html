@@ -149,7 +149,6 @@
 
         // 일반
         const username = window.localStorage.getItem('name');
-        window.localStorage.clear();
         let docs = await getDocs(collection(db, username));
 
         // 총 사용금액
