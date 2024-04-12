@@ -296,8 +296,9 @@
                 if (snap.exists()) {
                     let snapData = snap.data();
                     if (snapData['password'] == pw) {
+                        window.localStorage.setItem('name', name);
                         alert('로그인되었습니다.');
-                        window.location = "../main/newHomepage.html"//"https://www.google.com";      //여기에 메인화면 주소 수정해주시면 됩니다.
+                        window.location = "../main/newHomepage.html";
                     }
                     else {
                         alert('비밀번호가 틀렸습니다.');
@@ -323,8 +324,6 @@
         $("#enrollmentBtn").click(async function () {
             let name = $('#enrollName').val();
             let pw = $('#enrollPassword').val();
-            console.log(name);
-            console.log(pw);
 
             if (name != '' && pw != '') {
                 const snap = await getDoc(doc(db, name, 'password'));
